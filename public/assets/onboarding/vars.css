@@ -1,0 +1,83 @@
+/* Figma Styles of your File */
+:root {
+  /* Colors */
+  --background: #ffffff;
+  --body-text: #121314;
+  --button: linear-gradient(
+    96.49deg,
+    rgba(251, 2, 147, 1) 0.9615384973585606%,
+    rgba(115, 109, 223, 1) 31.730768084526062%
+  );
+  --heading: #0a1852;
+  --accent-colour: #8a38f5;
+
+  /* Fonts */
+  --hero-heading-font-family: Montserrat-Bold, sans-serif;
+  --hero-heading-font-size: 64px;
+  --hero-heading-line-height: normal;
+  --hero-heading-font-weight: 700;
+  --hero-heading-font-style: normal;
+  --section-tittle-font-family: Montserrat-SemiBold, sans-serif;
+  --section-tittle-font-size: 36px;
+  --section-tittle-line-height: 44px;
+  --section-tittle-font-weight: 600;
+  --section-tittle-font-style: normal;
+  --paragraph-body-font-family: Inter-Medium, sans-serif;
+  --paragraph-body-font-size: 18px;
+  --paragraph-body-line-height: 26px;
+  --paragraph-body-font-weight: 500;
+  --paragraph-body-font-style: normal;
+  --card-title-font-family: Inter-Light, sans-serif;
+  --card-title-font-size: 12px;
+  --card-title-line-height: 121.65%;
+  --card-title-font-weight: 300;
+  --card-title-font-style: normal;
+  --card-descrption-font-family: Inter-Regular, sans-serif;
+  --card-descrption-font-size: 10px;
+  --card-descrption-line-height: normal;
+  --card-descrption-font-weight: 400;
+  --card-descrption-font-style: normal;
+  --card-label-font-family: Inter-Regular, sans-serif;
+  --card-label-font-size: 8px;
+  --card-label-line-height: normal;
+  --card-label-font-weight: 400;
+  --card-label-font-style: normal;
+  --undefined-font-family: BeVietnamPro-Bold, sans-serif;
+  --undefined-font-size: 14px;
+  --undefined-line-height: normal;
+  --undefined-font-weight: 700;
+  --undefined-font-style: normal;
+  --undefined-font-family: BeVietnamPro-Bold, sans-serif;
+  --undefined-font-size: 14px;
+  --undefined-line-height: normal;
+  --undefined-font-weight: 700;
+  --undefined-font-style: normal;
+  --card-title-blog-font-family: Inter-Medium, sans-serif;
+  --card-title-blog-font-size: 22px;
+  --card-title-blog-line-height: 26px;
+  --card-title-blog-font-weight: 500;
+  --card-title-blog-font-style: normal;
+  --header-text-font-family: Montserrat-Medium, sans-serif;
+  --header-text-font-size: 16px;
+  --header-text-line-height: normal;
+  --header-text-font-weight: 500;
+  --header-text-font-style: normal;
+  --header-hover-font-family: Montserrat-SemiBold, sans-serif;
+  --header-hover-font-size: 16px;
+  --header-hover-line-height: normal;
+  --header-hover-font-weight: 600;
+  --header-hover-font-style: normal;
+  --body-text-pargraphy-font-family: Montserrat-Regular, sans-serif;
+  --body-text-pargraphy-font-size: 16px;
+  --body-text-pargraphy-line-height: 26px;
+  --body-text-pargraphy-font-weight: 400;
+  --body-text-pargraphy-font-style: normal;
+
+  /* Effects */
+}
+/* Figma Color Variables of your File */
+[data-variable-collection-mode="mode-1"] {
+  /* mode-1 */
+  --state: rgba(10, 24, 82, 0.5);
+  --color: var(--state);
+}
