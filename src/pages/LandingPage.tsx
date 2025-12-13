@@ -72,7 +72,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Meet Our Experts */}
-      <section className="py-16 md:py-20 px-4 sm:px-8 md:px-20 bg-[#f9fafb]">
+      {/* <section className="py-16 md:py-20 px-4 sm:px-8 md:px-20 bg-[#f9fafb]">
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-2xl md:text-4xl font-bold text-heading mb-4 font-montserrat">Meet Our Experts</h2>
           <p className="text-gray-600 text-base md:text-lg">Certified naturopathy professionals ready to guide your healing journey</p>
@@ -95,7 +95,7 @@ const LandingPage: React.FC = () => {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Why Choose NaturoFit */}
       <section className="py-16 md:py-20 px-4 sm:px-8 md:px-20 bg-white">

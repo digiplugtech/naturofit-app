@@ -1,11 +1,46 @@
 import React, { useState, useRef } from 'react';
+import config from '../config';
+import { logEvent } from '../utils/analytics';
 
 const OnboardingPage: React.FC = () => {
-  const [certificateFile, setCertificateFile] = useState<File | null>(null);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    age: '',
+    gender: '',
+    contactNumber: '',
+    email: '',
+    education: '',
+    experienceYears: '',
+    specialization: [] as string[],
+    consultationType: 'Online',
+    clinicLocation: '',
+    bio: '',
+  });
+
+  const [certificate_file, setCertificateFile] = useState<File | null>(null);
+  const [profile_photo, setPhotoFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const certificateInputRef = useRef<HTMLInputElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckboxChange = (area: string) => {
+    setFormData(prev => {
+      const current = prev.specialization;
+      if (current.includes(area)) {
+        return { ...prev, specialization: current.filter(a => a !== area) };
+      } else {
+        return { ...prev, specialization: [...current, area] };
+      }
+    });
+  };
 
   const handleCertificateClick = () => {
     certificateInputRef.current?.click();
@@ -27,6 +62,72 @@ const OnboardingPage: React.FC = () => {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    console.log('Submitting doctor registration:', {
+        ...formData,
+        certificate_file: certificate_file ? certificate_file.name : null,
+        profile_photo: profile_photo ? profile_photo.name : null
+    });
+
+    try {
+      const submitData = new FormData();
+      
+      // Append all form fields
+      Object.keys(formData).forEach(key => {
+        if (key === 'specialization') {
+          submitData.append(key, JSON.stringify(formData[key as keyof typeof formData]));
+        } else {
+          submitData.append(key, String(formData[key as keyof typeof formData]));
+        }
+      });
+
+      // Append files
+      if (certificate_file) {
+        submitData.append('certificate_file', certificate_file);
+      }
+      if (profile_photo) {
+        submitData.append('profile_photo', profile_photo);
+      }
+
+      const response = await fetch(`${config.apiUrl}/doctors`, {
+        method: 'POST',
+        body: submitData, // FormData automatically sets the correct Content-Type header with boundary
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to register doctor');
+      }
+
+      setSuccess(true);
+      logEvent('Onboarding', 'Form Submitted', 'Doctor Registration');
+      // Reset form
+      setFormData({
+        name: '',
+        age: '',
+        gender: '',
+        contactNumber: '',
+        email: '',
+        education: '',
+        experienceYears: '',
+        specialization: [],
+        consultationType: 'Online',
+        clinicLocation: '',
+        bio: '',
+      });
+      setCertificateFile(null);
+      setPhotoFile(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred during registration');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="font-sans text-body bg-[#f9fafb]">
        <div className="text-center py-8 md:py-10 px-4">
@@ -40,8 +141,8 @@ const OnboardingPage: React.FC = () => {
           <div className="w-12 h-12 md:w-16 md:h-16 bg-[#e0f2fe] rounded-full flex items-center justify-center mx-auto mb-4">
              <img src="/assets/onboarding/frame0.svg" alt="Register" className="w-6 h-6 md:w-8 md:h-8" />
           </div>
-          <h2 className="text-xl md:text-2xl font-bold text-heading">Book Your Consultation</h2>
-          <p className="text-gray-500 text-sm md:text-base">Schedule an appointment with our certified naturopathy doctors.</p>
+          <h2 className="text-xl md:text-2xl font-bold text-heading">Doctor Onboarding</h2>
+          <p className="text-gray-500 text-sm md:text-base">Join our network of certified naturopathy & homeopathy doctors.</p>
         </div>
 
         {/* Confirmation Box */}
@@ -56,43 +157,94 @@ const OnboardingPage: React.FC = () => {
                  I confirm that all the provided information is true and accurate. I understand that providing false information may result in the rejection of my application or termination of services.
              </p>
         </div>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm text-center">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-600 rounded-lg text-sm text-center">
+            Registration successful! Our team will verify your details shortly.
+          </div>
+        )}
         
-        <form className="space-y-6 md:space-y-8">
+        <form className="space-y-6 md:space-y-8" onSubmit={handleSubmit}>
             {/* Personal Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                     <img src="/assets/onboarding/frame3.svg" alt="" className="w-4 h-4" /> Full Name
                   </label>
-                  <input type="text" placeholder="Enter your full name" className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" />
+                  <input 
+                    name="name" 
+                    value={formData.name} 
+                    onChange={handleInputChange} 
+                    type="text"  
+                    placeholder="Enter your full name" 
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" 
+                    required 
+                  />
                 </div>
                 <div>
                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                     <img src="/assets/onboarding/frame4.svg" alt="" className="w-4 h-4" /> Age
                   </label>
-                  <input type="text" placeholder="Enter your age" className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" />
+                  <input 
+                    name="age" 
+                    value={formData.age} 
+                    onChange={handleInputChange} 
+                    type="number" 
+                    placeholder="Enter your age" 
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" 
+                    required 
+                  />
                 </div>
                  <div>
                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                     <img src="/assets/onboarding/frame5.svg" alt="" className="w-4 h-4" /> Gender
                   </label>
-                  <select className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary bg-white appearance-none">
-                      <option>Choose a gender</option>
-                      <option>Male</option>
-                      <option>Female</option>
+                  <select 
+                    name="gender" 
+                    value={formData.gender} 
+                    onChange={handleInputChange} 
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary bg-white appearance-none"
+                    required
+                  >
+                      <option value="">Choose a gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
                   </select>
                 </div>
                  <div>
                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                     <img src="/assets/onboarding/frame9.svg" alt="" className="w-4 h-4" /> Contact Number
                   </label>
-                  <input type="tel" placeholder="Enter your Phone Number" className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" />
+                  <input 
+                    name="contactNumber" 
+                    value={formData.contactNumber} 
+                    onChange={handleInputChange} 
+                    type="tel" 
+                    placeholder="Enter your Phone Number" 
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" 
+                    required 
+                  />
                 </div>
                  <div className="md:col-span-2">
                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                     <img src="/assets/onboarding/frame10.svg" alt="" className="w-4 h-4" /> Email Address
                   </label>
-                  <input type="email" placeholder="Enter your Email Address" className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" />
+                  <input 
+                    name="email" 
+                    value={formData.email} 
+                    onChange={handleInputChange} 
+                    type="email" 
+                    placeholder="Enter your Email Address" 
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" 
+                    required 
+                  />
                 </div>
             </div>
 
@@ -106,19 +258,33 @@ const OnboardingPage: React.FC = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Education / Qualification</label>
                          <div className="border border-gray-200 rounded-lg p-3">
-                            <select className="w-full bg-transparent outline-none">
-                                <option>Qualification</option>
-                                {/* <option>MBBS</option> */}
-                                <option>BAMS</option>
-                                <option>BHMS</option>
-                                <option>BNYS</option>
-                                {/* <option>Other</option> */}
+                            <select 
+                                name="education" 
+                                value={formData.education} 
+                                onChange={handleInputChange} 
+                                className="w-full bg-transparent outline-none"
+                                required
+                            >
+                                <option value="">Qualification</option>
+                                <option value="MBBS">MBBS</option>
+                                <option value="BAMS">BAMS</option>
+                                <option value="BHMS">BHMS</option>
+                                <option value="BNYS">BNYS</option>
+                                <option value="Other">Other</option>
                             </select>
                          </div>
                     </div>
                      <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Years of Experience</label>
-                        <input type="text" placeholder="Qualification" className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" /> {/* Placeholder says "Qualification" in HTML? assume typo, should be years */}
+                        <input 
+                            name="experienceYears" 
+                            value={formData.experienceYears} 
+                            onChange={handleInputChange} 
+                            type="number" 
+                            placeholder="Years of Experience" 
+                            className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" 
+                            required 
+                        />
                     </div>
                 </div>
 
@@ -127,7 +293,12 @@ const OnboardingPage: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
                         {['Naturopathy', 'Homeopathy', 'Yoga Therapy', 'Diet Therapy', 'Acupuncture', 'Hydrotherapy', 'Massage Therapy', 'Herbal Medicine'].map(area => (
                             <label key={area} className="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" className="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary" />
+                                <input 
+                                    type="checkbox" 
+                                    checked={formData.specialization.includes(area)}
+                                    onChange={() => handleCheckboxChange(area)}
+                                    className="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary" 
+                                />
                                 <span className="text-sm text-gray-600">{area}</span>
                             </label>
                         ))}
@@ -137,15 +308,28 @@ const OnboardingPage: React.FC = () => {
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                      <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Modes of Consultation</label>
-                         <select className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary bg-white">
-                             <option>Online</option>
-                             {/* <option>General Consultation</option> */}
-                             {/* ... */}
+                         <select 
+                            name="consultationType" 
+                            value={formData.consultationType} 
+                            onChange={handleInputChange} 
+                            className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary bg-white"
+                         >
+                             <option value="Online">Online</option>
+                             {/* <option value="Offline">Offline</option>
+                             <option value="Both">Both</option> */}
                          </select>
                      </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Clinic / Practice Location</label>
-                        <input type="text" placeholder="Enter your full name" className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" /> {/* Placeholder says "Enter your full name"? Typo in HTML */}
+                        <input 
+                            name="clinicLocation" 
+                            value={formData.clinicLocation} 
+                            onChange={handleInputChange} 
+                            type="text" 
+                            placeholder="Enter location" 
+                            className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary" 
+                            required 
+                        />
                      </div>
                  </div>
             </div>
@@ -169,10 +353,10 @@ const OnboardingPage: React.FC = () => {
                             className="hidden"
                             accept=".pdf,.jpg,.jpeg,.png"
                         />
-                        {certificateFile ? (
+                        {certificate_file ? (
                             <>
                                 <div className="w-8 h-8 mb-3 bg-green-100 rounded-full flex items-center justify-center text-green-600">✓</div>
-                                <span className="text-sm font-medium text-gray-700 break-all">{certificateFile.name}</span>
+                                <span className="text-sm font-medium text-gray-700 break-all">{certificate_file.name}</span>
                                 <span className="text-xs text-gray-400 mt-1">Change file</span>
                             </>
                         ) : (
@@ -196,14 +380,14 @@ const OnboardingPage: React.FC = () => {
                             className="hidden"
                             accept=".jpg,.jpeg,.png"
                         />
-                        {photoFile ? (
+                        {profile_photo ? (
                             <>
                                 <img 
-                                    src={URL.createObjectURL(photoFile)} 
+                                    src={URL.createObjectURL(profile_photo)} 
                                     alt="Preview" 
                                     className="w-16 h-16 mb-3 rounded-full object-cover border border-gray-200" 
                                 />
-                                <span className="text-sm font-medium text-gray-700 break-all">{photoFile.name}</span>
+                                <span className="text-sm font-medium text-gray-700 break-all">{profile_photo.name}</span>
                                 <span className="text-xs text-gray-400 mt-1">Change photo</span>
                             </>
                         ) : (
@@ -218,13 +402,30 @@ const OnboardingPage: React.FC = () => {
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Short Bio</label>
-                    <textarea rows={4} placeholder="Write a brief introduction about yourself, your experience, and approach to naturopathy..." className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary resize-none"></textarea>
+                    <textarea 
+                        name="bio" 
+                        value={formData.bio} 
+                        onChange={handleInputChange} 
+                        rows={4} 
+                        placeholder="Write a brief introduction about yourself..." 
+                        className="w-full border border-gray-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary resize-none"
+                    ></textarea>
                 </div>
             </div>
             
-            <button type="submit" className="w-full bg-primary hover:bg-opacity-90 text-white font-semibold py-3 md:py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
-               <img src="/assets/onboarding/frame2.svg" alt="" className="w-5 h-5" />
-               Register as Naturopath
+            <button 
+                type="submit" 
+                disabled={loading}
+                className="w-full bg-primary hover:bg-opacity-90 text-white font-semibold py-3 md:py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+               {loading ? (
+                   <span>Registering...</span>
+               ) : (
+                   <>
+                    <img src="/assets/onboarding/frame2.svg" alt="" className="w-5 h-5" />
+                    Register as Naturopath
+                   </>
+               )}
             </button>
 
         </form>

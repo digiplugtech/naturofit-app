@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import config from '../config';
+import { logEvent } from '../utils/analytics';
 
 const BookingPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -45,6 +46,7 @@ const BookingPage: React.FC = () => {
       }
 
       setSuccess(true);
+      logEvent('Booking', 'Form Submitted', 'Customer Booking');
       setFormData({
         name: '',
         age: '',
