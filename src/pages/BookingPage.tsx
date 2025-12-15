@@ -12,7 +12,7 @@ const BookingPage: React.FC = () => {
     preferredDate: '',
     preferredTime: '',
     consultationType: '',
-    healthConcern: '',
+    symptoms: '', // Renamed from healthConcern
   });
 
   const [loading, setLoading] = useState(false);
@@ -102,7 +102,7 @@ const BookingPage: React.FC = () => {
               </label>
               <input 
                 name="name" 
-                value={formData.fullName} 
+                value={formData.name} 
                 onChange={handleInputChange} 
                 type="text" 
                 placeholder="Enter your full name" 
@@ -244,8 +244,8 @@ const BookingPage: React.FC = () => {
                  <img src="/assets/booking/frame30.svg" alt="" className="w-4 h-4" /> Health Concern / Symptoms
               </label>
             <textarea 
-              name="healthConcern" 
-              value={formData.healthConcern} 
+              name="symptoms" // Renamed from healthConcern
+              value={formData.symptoms} // Renamed from healthConcern
               onChange={handleInputChange} 
               placeholder="Describe your health concerns or symptoms" 
               rows={4} 
