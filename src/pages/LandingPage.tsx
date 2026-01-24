@@ -20,9 +20,9 @@ const LandingPage: React.FC = () => {
             <Link to="/booking" className="bg-primary hover:bg-opacity-90 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg transition-all text-center">
               Book Your 1:1 Session
             </Link>
-            <button className="border-2 border-primary text-primary-dark px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary hover:text-white transition-all">
+            <Link to="/learn-more" className="border-2 border-primary text-primary-dark px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary hover:text-white transition-all text-center">
               Learn More
-            </button>
+            </Link>
           </div>
         </div>
         <div className="md:w-1/2 relative w-full mt-8 md:mt-0 flex justify-center">

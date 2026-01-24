@@ -14,7 +14,7 @@ const Header: React.FC = () => {
       
       {/* Desktop Nav */}
       <nav className="hidden md:flex items-center gap-8">
-        {/* <Link to="/about" className="text-[#2f4f4f] font-medium font-sans hover:text-primary transition-colors">About Us</Link> */}
+        <Link to="/about" className="text-[#2f4f4f] font-medium font-sans hover:text-primary transition-colors">About Us</Link>
         {/* <Link to="/shop" className="text-[#2f4f4f] font-medium font-sans hover:text-primary transition-colors">Shop</Link>
         <Link to="/wellness" className="text-[#2f4f4f] font-medium font-sans hover:text-primary transition-colors">Wellness</Link>
         <Link to="/yoga" className="text-[#2f4f4f] font-medium font-sans hover:text-primary transition-colors">Yoga Exercise</Link> */}
@@ -46,8 +46,8 @@ const Header: React.FC = () => {
       {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
         <div className="absolute top-full left-0 w-full bg-white shadow-lg py-6 px-6 flex flex-col gap-4 md:hidden border-t border-gray-100">
-          {/* <Link to="/about" className="text-[#2f4f4f] font-medium text-lg" onClick={() => setIsMenuOpen(false)}>About Us</Link>
-          <Link to="/shop" className="text-[#2f4f4f] font-medium text-lg" onClick={() => setIsMenuOpen(false)}>Shop</Link>
+          <Link to="/about" className="text-[#2f4f4f] font-medium text-lg" onClick={() => setIsMenuOpen(false)}>About Us</Link>
+          {/* <Link to="/shop" className="text-[#2f4f4f] font-medium text-lg" onClick={() => setIsMenuOpen(false)}>Shop</Link>
           <Link to="/wellness" className="text-[#2f4f4f] font-medium text-lg" onClick={() => setIsMenuOpen(false)}>Wellness</Link>
           <Link to="/yoga" className="text-[#2f4f4f] font-medium text-lg" onClick={() => setIsMenuOpen(false)}>Yoga Exercise</Link> */}
           <Link 
