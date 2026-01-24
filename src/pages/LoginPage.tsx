@@ -129,7 +129,7 @@ const LoginPage: React.FC = () => {
 
           <div className="mt-8 text-center">
             <p className="text-gray-600 mb-2">Don't have an account?</p>
-            <Link to="/onboarding" className="text-primary font-bold hover:underline">Create New Account</Link>
+            <Link to="/signup" className="text-primary font-bold hover:underline">Create New Account</Link>
           </div>
 
           <div className="mt-6 bg-[#e8f5e8] rounded-xl p-3 flex items-center justify-center gap-2">
