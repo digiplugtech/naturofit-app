@@ -3,20 +3,23 @@ import Layout from './components/Layout';
 import LandingPage from './pages/LandingPage';
 import BookingPage from './pages/BookingPage';
 import OnboardingPage from './pages/OnboardingPage';
-// Import the new page
 import LearnMorePage from './pages/LearnMorePage';
+import AboutUsPage from './pages/AboutUsPage';
+import LoginPage from './pages/LoginPage';
+import PrivacyPage from './pages/PrivacyPage';
 
 function App() {
   return (
     <Router>
       <Layout>
         <Routes>
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/learn-more" element={<LearnMorePage />} />
-          {/* Aliases */}
-          <Route path="/about" element={<LearnMorePage />} />
+          <Route path="/about" element={<AboutUsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/join" element={<OnboardingPage />} />
         </Routes>
       </Layout>
